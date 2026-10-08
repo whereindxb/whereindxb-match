@@ -183,7 +183,7 @@ dt{color:var(--muted)} dd{margin:0;min-width:0;overflow-wrap:anywhere}
     <fieldset id="s3" hidden>
       <h2 class="steph">Where should the agent reach you?</h2>
       <div class="q"><label for="name">Name</label>
-        <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Aisha Khan">
+        <input type="text" id="name" name="name" autocomplete="name" placeholder="e.g. Joe Smith">
       </div>
       <div class="q"><label for="phone">WhatsApp number</label>
         <div class="row">
@@ -194,12 +194,12 @@ dt{color:var(--muted)} dd{margin:0;min-width:0;overflow-wrap:anywhere}
           <input type="tel" id="phone" name="phone" autocomplete="tel-national" inputmode="tel" placeholder="50 123 4567">
         </div>
       </div>
-      <div class="q"><label for="email">Email <span class="hint">· optional</span></label>
-        <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com">
+      <div class="q"><label for="email">Email <span class="hint">· for important communications and offers</span></label>
+        <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" required>
       </div>
       <label class="consent" for="consent">
         <input type="checkbox" id="consent" name="consent">
-        <span>I agree that Where in Dubai may share my answers and contact details with one RERA-licensed partner agency so they can contact me. I can ask for my details to be deleted any time at hello@whereindxb.com.</span>
+        <span>I agree that Where in Dubai may share my answers and contact details with one RERA-licensed partner agency so they can contact me, and may email me important updates and offers. I can unsubscribe or ask for my details to be deleted any time at hello@whereindxb.com.</span>
       </label>
       <div class="err" id="e3" role="alert"></div>
     </fieldset>
@@ -212,7 +212,7 @@ dt{color:var(--muted)} dd{margin:0;min-width:0;overflow-wrap:anywhere}
 
   <section class="card done" id="done" hidden aria-live="polite">
     <h2>Thank you, <span id="dName"></span>.</h2>
-    <p style="margin:0">An experienced local agent will message you on WhatsApp within 24 hours. Your reference is <span class="ref" id="dRef"></span>.</p>
+    <p style="margin:0">An experienced local agent will message you on WhatsApp within 24-48 hours. Your reference is <span class="ref" id="dRef"></span>.</p>
     <p style="margin:0;color:var(--muted);font-size:.9rem">Questions before then? Email <a href="mailto:hello@whereindxb.com">hello@whereindxb.com</a> and quote your reference.</p>
     <div class="profile">
       <h3>What you told us</h3>
@@ -221,7 +221,7 @@ dt{color:var(--muted)} dd{margin:0;min-width:0;overflow-wrap:anywhere}
     <div class="actions"><button type="button" class="ghost" id="again">Start again</button></div>
   </section>
 
-  <p class="fine">Questions? Email us at <a href="mailto:hello@whereindxb.com">hello@whereindxb.com</a><br>Where in Dubai does not advertise or sell specific properties. Options are shared only by RERA-licensed agents.</p>
+  <p class="fine">Questions? Email us at <a href="mailto:hello@whereindxb.com">hello@whereindxb.com</a><br>Where in Dubai does not advertise or sell specific properties. Options are shared only by trusted and experienced local agents.</p>
 </div>
 
 <script>
@@ -267,7 +267,7 @@ function show(n){
   step = n;
   [1,2,3].forEach(i => { $("#s"+i).hidden = i !== n; $("#r"+i).classList.toggle("on", i <= n); });
   $("#back").hidden = n === 1;
-  $("#next").textContent = n === 3 ? "Match me with an agent" : "Continue";
+  $("#next").textContent = n === 3 ? "Find my fit" : "Continue";
 }
 
 function validate(n){
@@ -281,7 +281,8 @@ function validate(n){
     const digits = $("#phone").value.replace(/\D/g,""), em = $("#email").value.trim();
     if ($("#name").value.trim().length < 2) return fail(3, "Please enter your name.", $("#name"));
     if (digits.length < 7) return fail(3, "Please enter a WhatsApp number we can reach, without the country code.", $("#phone"));
-    if (em && !/^\S+@\S+\.\S+$/.test(em)) return fail(3, "That email address doesn't look complete.", $("#email"));
+    if (!em) return fail(3, "Please enter your email address.", $("#email"));
+    if (!/^\S+@\S+\.\S+$/.test(em)) return fail(3, "That email address doesn't look complete.", $("#email"));
     if (!$("#consent").checked) return fail(3, "Please tick the consent box so we can pass your request to an agent.");
   }
   $("#e"+n).textContent = "";
@@ -305,7 +306,7 @@ async function submit(){
   if (ENDPOINT){
     $("#next").disabled = true; $("#next").textContent = "Sending…";
     try { await fetch(ENDPOINT, { method:"POST", mode:"no-cors", body: JSON.stringify(lead) }); }
-    catch(err){ $("#e3").textContent = "We couldn't send your answers. Check your connection and try again."; $("#next").disabled = false; $("#next").textContent = "Match me with an agent"; return; }
+    catch(err){ $("#e3").textContent = "We couldn't send your answers. Check your connection and try again."; $("#next").disabled = false; $("#next").textContent = "Find my fit"; return; }
   }
   $("#dName").textContent = lead.name.split(" ")[0];
   $("#dRef").textContent = lead.ref;
